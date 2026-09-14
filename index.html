@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة الشفرة اللطيفة</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Baloo Bhaijaan 2 (Cute Arabic) and Nunito (Cute English/Numbers) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        arabic: ['"Baloo Bhaijaan 2"', 'sans-serif'],
+                        english: ['"Nunito"', 'sans-serif'],
+                    },
+                    colors: {
+                        pastel: {
+                            pink: '#FFD1DC',
+                            blue: '#B5E2FA',
+                            green: '#C1FBA4',
+                            yellow: '#FFF3B0',
+                            purple: '#E2C2FF',
+                            text: '#5D5D5D'
+                        }
+                    },
+                    boxShadow: {
+                        'cute': '0 10px 25px -5px rgba(255, 182, 193, 0.4), 0 8px 10px -6px rgba(255, 182, 193, 0.2)',
+                        'cute-inner': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.8)',
+                        'cute-btn': '0 6px 0 0 #fbcfe8, 0 8px 15px rgba(0,0,0,0.1)',
+                        'cute-btn-active': '0 0px 0 0 #fbcfe8, 0 2px 5px rgba(0,0,0,0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Baloo Bhaijaan 2', sans-serif;
+            background-color: #FFF0F5; /* LavenderBlush */
+            background-image: radial-gradient(#FFD1DC 2px, transparent 2px);
+            background-size: 30px 30px;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow-x: hidden;
+        }
+
+        .font-eng {
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* Cute Bouncy Button Style */
+        .btn-bouncy {
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0);
+        }
+        
+        .btn-bouncy:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0 0 var(--tw-shadow-color, #e2e8f0), 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .cute-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .cute-scrollbar::-webkit-scrollbar-track {
+            background: #FFE4E1;
+            border-radius: 10px;
+        }
+        .cute-scrollbar::-webkit-scrollbar-thumb {
+            background: #FFB6C1;
+            border-radius: 10px;
+            border: 2px solid #FFE4E1;
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-pastel-text flex flex-col items-center justify-center py-6 px-4 selection:bg-pastel-pink selection:text-white">
+
+    <main class="w-full max-w-lg flex flex-col gap-5 z-10">
+        
+        <!-- Header -->
+        <header class="flex items-center justify-between bg-white/80 backdrop-blur-md px-6 py-4 rounded-3xl shadow-cute border-4 border-white animate-float">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-pink-300 to-purple-300 flex items-center justify-center text-white shadow-md">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-pink-500 leading-none">حاسبة الشفرة</h1>
+                    <p class="text-sm text-purple-400 font-bold flex items-center gap-1.5 mt-1">
+                        الكلمة:
+                        <span id="current-cipher-badge" class="font-eng bg-purple-100 px-2 py-0.5 rounded-full text-purple-600 font-black tracking-widest text-xs border border-purple-200">PHOSFATINE</span>
+                    </p>
+                </div>
+            </div>
+            
+            <button id="open-settings" title="تعديل الشفرة" class="w-10 h-10 rounded-full bg-blue-50 text-blue-400 hover:bg-blue-100 hover:text-blue-500 flex items-center justify-center transition-colors shadow-sm border border-blue-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </button>
+        </header>
+
+        <div class="bg-white rounded-[2rem] shadow-cute border-4 border-white overflow-hidden flex flex-col">
+            
+            <!-- Input Screen (LTR Layout for English Letters) -->
+            <div class="bg-slate-800 p-6 relative">
+                <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                
+                <div class="relative z-10 flex flex-col gap-3">
+                    <div class="flex items-center justify-between text-pink-300 text-sm font-bold">
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-pink-400 animate-pulse border-2 border-slate-800"></span>
+                            الشفرة المدخلة
+                        </span>
+                        <!-- Piastres equivalent -->
+                        <div id="piastres-hint" class="font-eng bg-slate-700/80 px-3 py-1 rounded-full text-pink-200 text-xs tracking-widest opacity-0 transition-opacity border border-slate-600">
+                            0 piasters
+                        </div>
+                    </div>
+
+                    <!-- LTR Display Container -->
+                    <div id="input-display" dir="ltr" class="text-left font-eng text-4xl sm:text-5xl font-black text-white tracking-[0.2em] h-14 flex items-center overflow-x-auto cute-scrollbar whitespace-nowrap">
+                        <!-- Letters injected here -->
+                    </div>
+                    
+                    <p id="empty-hint" class="text-slate-400 text-sm font-semibold absolute top-1/2 left-6 right-6 -translate-y-1/2 text-center pointer-events-none">
+                        ابدأ بكتابة الشفرة...
+                    </p>
+                </div>
+            </div>
+
+            <!-- Price Output Box -->
+            <div class="p-6 bg-gradient-to-b from-pink-50/50 to-white flex flex-col gap-5">
+                
+                <!-- Numeric & Text Combined -->
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-end justify-between bg-white px-5 py-4 rounded-3xl border-2 border-pink-100 shadow-sm">
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-pink-400 mb-1">السعر (بالأرقام):</span>
+                            <div class="flex items-baseline gap-1.5 font-eng">
+                                <span id="numeric-price" class="text-4xl font-black text-slate-700 tracking-tight">0.00</span>
+                                <span class="text-lg font-bold text-pink-500 font-arabic">ج.م</span>
+                            </div>
+                        </div>
+                        <button id="btn-copy-num" class="w-12 h-12 rounded-full bg-pink-100 text-pink-500 hover:bg-pink-200 flex items-center justify-center transition-colors shadow-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" /></svg>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between bg-white px-5 py-4 rounded-3xl border-2 border-purple-100 shadow-sm">
+                        <div class="flex flex-col flex-grow">
+                            <span class="text-sm font-bold text-purple-400 mb-1">السعر (بالتفقيط):</span>
+                            <p id="text-price" class="text-lg font-bold text-slate-700 leading-tight">
+                                سعر التركيبة: صفر جنيه فقط لا غير
+                            </p>
+                        </div>
+                        <button id="btn-copy-text" class="w-12 h-12 shrink-0 rounded-full bg-purple-100 text-purple-500 hover:bg-purple-200 flex items-center justify-center transition-colors shadow-sm ml-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 012-2h2a2 2 0 012-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[2rem] shadow-cute border-4 border-white p-6 flex flex-col gap-4">
+            
+            <!-- Letter Keys Grid: 5 columns x 2 rows -->
+            <!-- The Javascript will render exactly the 10 letters of the cipher here -->
+            <div id="keypad-letters" class="grid grid-cols-5 gap-3" dir="ltr">
+                <!-- Injected via JS -->
+            </div>
+
+            <hr class="border-pink-100 border-dashed my-1">
+
+            <!-- Control Keys -->
+            <div class="grid grid-cols-2 gap-4">
+                <button id="btn-backspace" class="btn-bouncy shadow-cute-btn shadow-pink-200 bg-pink-100 text-pink-600 rounded-2xl py-4 flex items-center justify-center gap-2 font-bold text-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V6a2 2 0 00-2-2h-9.172a2 2 0 00-1.414.586L3 12z" />
+                    </svg>
+                    حذف حرف
+                </button>
+                <button id="btn-clear" class="btn-bouncy shadow-cute-btn shadow-rose-200 bg-rose-100 text-rose-500 rounded-2xl py-4 flex items-center justify-center gap-2 font-bold text-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    مسح الكل
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Settings -->
+    <div id="modal-settings" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity">
+        <div class="bg-white rounded-[2rem] shadow-2xl border-4 border-pink-100 w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300" id="modal-content">
+            <div class="bg-gradient-to-r from-pink-100 to-purple-100 px-6 py-4 flex items-center justify-between">
+                <h3 class="font-extrabold text-slate-700 text-xl flex items-center gap-2">
+                    <span>✨</span> إعدادات الشفرة
+                </h3>
+                <button id="close-settings" class="w-8 h-8 bg-white/50 rounded-full flex items-center justify-center text-slate-500 hover:bg-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            
+            <div class="p-6 flex flex-col gap-4">
+                <p class="text-sm text-slate-500 font-bold leading-relaxed text-center">
+                    اكتب كلمة شفرة من <span class="text-pink-500">10 حروف إنجليزية</span> مختلفة. سيتم ترتيب الأزرار بنفس ترتيب الكلمة.
+                </p>
+
+                <div dir="ltr">
+                    <input type="text" id="input-cipher" maxlength="10" placeholder="PHOSFATINE" class="w-full bg-slate-50 px-4 py-4 rounded-2xl border-2 border-slate-200 font-eng text-center tracking-[0.3em] uppercase font-black text-slate-700 focus:border-pink-400 focus:ring-4 focus:ring-pink-100 outline-none text-xl transition-all">
+                </div>
+                <p id="error-msg" class="text-rose-500 text-sm font-bold text-center hidden">يجب إدخال 10 حروف غير مكررة!</p>
+
+                <div class="flex gap-3 mt-2">
+                    <button id="btn-save" class="flex-1 bg-pink-400 text-white font-bold py-3.5 rounded-2xl hover:bg-pink-500 active:scale-95 transition-all shadow-md">
+                        حفظ الكلمة
+                    </button>
+                    <button id="btn-reset" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3.5 rounded-2xl hover:bg-slate-200 active:scale-95 transition-all">
+                        الافتراضي
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cute Toast Notification -->
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-white px-6 py-3.5 rounded-full shadow-cute border-2 border-pink-200 flex items-center gap-3 text-pink-600 font-bold text-sm z-50 transform translate-y-20 opacity-0 transition-all duration-400 pointer-events-none">
+        <span class="text-xl">💖</span>
+        <span id="toast-text">تم النسخ بنجاح!</span>
+    </div>
+
+    <script>
+        // Constants & State
+        const DEFAULT_CIPHER = "PHOSFATINE";
+        let currentCipher = localStorage.getItem('cute_cipher') || DEFAULT_CIPHER;
+        let enteredLetters = "";
+
+        // DOM Elements
+        const displayDiv = document.getElementById('input-display');
+        const emptyHint = document.getElementById('empty-hint');
+        const piastresHint = document.getElementById('piastres-hint');
+        const numPriceEl = document.getElementById('numeric-price');
+        const textPriceEl = document.getElementById('text-price');
+        const keypadContainer = document.getElementById('keypad-letters');
+        const cipherBadge = document.getElementById('current-cipher-badge');
+        const toast = document.getElementById('toast');
+        const toastText = document.getElementById('toast-text');
+        
+        const modal = document.getElementById('modal-settings');
+        const modalContent = document.getElementById('modal-content');
+        const inputCipher = document.getElementById('input-cipher');
+        const errorMsg = document.getElementById('error-msg');
+
+        // ==== 1. Logic: Tafqeet Engine (Arabic Currency Number to Words) ====
+        function tafqeetEgyptian(pounds, piastres) {
+            if (pounds === 0 && piastres === 0) return "صفر جنيه";
+
+            const ones = ["", "واحد", "اثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة"];
+            const tens = ["", "عشرة", "عشرون", "ثلاثون", "أربعون", "خمسون", "ستون", "سبعون", "ثمانون", "تسعون"];
+            const teens = ["عشرة", "أحد عشر", "اثنا عشر", "ثلاثة عشر", "أربعة عشر", "خمسة عشر", "ستة عشر", "سبعة عشر", "ثمانية عشر", "تسعة عشر"];
+            const hundreds = ["", "مائة", "مائتان", "ثلاثمائة", "أربعمائة", "خمسمائة", "ستمائة", "سبعمائة", "ثمانمائة", "تسعمائة"];
+
+            function convertToText(num) {
+                if (num === 0) return "";
+                if (num < 10) return ones[num];
+                if (num >= 10 && num < 20) return teens[num - 10];
+                if (num >= 20 && num < 100) {
+                    const u = num % 10;
+                    const t = Math.floor(num / 10);
+                    return u === 0 ? tens[t] : ones[u] + " و" + tens[t];
+                }
+                if (num >= 100 && num < 1000) {
+                    const h = Math.floor(num / 100);
+                    const rem = num % 100;
+                    if (rem === 0) return hundreds[h];
+                    return hundreds[h] + " و" + convertToText(rem);
+                }
+                if (num >= 1000 && num < 1000000) {
+                    const th = Math.floor(num / 1000);
+                    const rem = num % 1000;
+                    let thWord = "";
+                    if (th === 1) thWord = "ألف";
+                    else if (th === 2) thWord = "ألفان";
+                    else if (th >= 3 && th <= 10) thWord = convertToText(th) + " آلاف";
+                    else thWord = convertToText(th) + " ألفاً";
+                    
+                    if (rem === 0) return thWord;
+                    return thWord + " و" + convertToText(rem);
+                }
+                return num.toString();
+            }
+
+            let poundText = "";
+            if (pounds > 0) {
+                if (pounds === 1) poundText = "جنيه واحد";
+                else if (pounds === 2) poundText = "جنيهان";
+                else if (pounds >= 3 && pounds <= 10) poundText = convertToText(pounds) + " جنيهات";
+                else poundText = convertToText(pounds) + " جنيهاً";
+            }
+
+            let piasterText = "";
+            if (piastres > 0) {
+                if (piastres === 1) piasterText = "قرش واحد";
+                else if (piastres === 2) piasterText = "قرشان";
+                else if (piastres >= 3 && piastres <= 10) piasterText = convertToText(piastres) + " قروش";
+                else piasterText = convertToText(piastres) + " قرشاً";
+            }
+
+            if (pounds > 0 && piastres > 0) return poundText + " و" + piasterText;
+            if (pounds > 0) return poundText;
+            return piasterText;
+        }
+
+        // ==== 2. UI Updates & Calculators ====
+        function getCipherMap() {
+            const map = {};
+            // Letter at index 0..8 mapped to 1..9. Letter at index 9 mapped to 0.
+            for (let i = 0; i < 10; i++) {
+                const char = currentCipher[i].toUpperCase();
+                map[char] = (i === 9) ? 0 : i + 1;
+            }
+            return map;
+        }
+
+        function buildKeypad() {
+            keypadContainer.innerHTML = '';
+            const map = getCipherMap();
+            
+            // Render exactly in the order of the cipher string
+            for (let i = 0; i < currentCipher.length; i++) {
+                const char = currentCipher[i].toUpperCase();
+                const digit = map[char];
+                
+                const btn = document.createElement('button');
+                // Cute styling for keys: LTR is on container, these render sequentially
+                btn.className = "btn-bouncy flex flex-col items-center justify-center py-3 bg-white shadow-cute-btn shadow-slate-200 border-2 border-slate-100 rounded-2xl text-slate-700 hover:text-pink-500 hover:border-pink-200 transition-colors group";
+                
+                btn.innerHTML = `
+                    <span class="font-eng text-2xl font-black group-hover:scale-110 transition-transform">${char}</span>
+                    <span class="font-eng bg-slate-100 text-slate-500 text-[11px] font-bold px-2 py-0.5 rounded-full mt-1 group-hover:bg-pink-100 group-hover:text-pink-500">${digit}</span>
+                `;
+                
+                btn.addEventListener('click', () => {
+                    if(enteredLetters.length < 12) { // Limit length
+                        enteredLetters += char;
+                        updateScreen();
+                    }
+                });
+                
+                keypadContainer.appendChild(btn);
+            }
+            cipherBadge.textContent = currentCipher;
+        }
+
+        function updateScreen() {
+            // Render typed letters LTR
+            if (enteredLetters === "") {
+                displayDiv.innerHTML = "";
+                emptyHint.style.display = "block";
+                piastresHint.style.opacity = "0";
+                numPriceEl.textContent = "0.00";
+                textPriceEl.textContent = "سعر التركيبة: صفر جنيه فقط لا غير";
+                return;
+            }
+
+            emptyHint.style.display = "none";
+            
+            // Build visual letters (left to right)
+            displayDiv.innerHTML = enteredLetters.split('').map(char => 
+                `<span class="mx-0.5 inline-block text-pink-300 transform scale-110 drop-shadow-md">${char}</span>`
+            ).join('');
+            
+            // Scroll to end of LTR display automatically
+            displayDiv.scrollLeft = displayDiv.scrollWidth;
+
+            // Calculate Value
+            const map = getCipherMap();
+            let piastersStr = "";
+            for (let char of enteredLetters) {
+                if (map[char] !== undefined) piastersStr += map[char];
+            }
+            
+            const totalPiastres = parseInt(piastersStr || "0", 10);
+            piastresHint.textContent = `${totalPiastres} قرش`;
+            piastresHint.style.opacity = "1";
+
+            const pounds = Math.floor(totalPiastres / 100);
+            const piasters = totalPiastres % 100;
+
+            // Update Numbers
+            numPriceEl.textContent = (totalPiastres / 100).toFixed(2);
+            
+            // Update Text
+            const arabicWords = tafqeetEgyptian(pounds, piasters);
+            textPriceEl.textContent = `سعر التركيبة: ${arabicWords} فقط لا غير`;
+        }
+
+        // ==== 3. Actions & Clipboard ====
+        function showToastMessage(msg) {
+            toastText.textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        function fallbackCopyTextToClipboard(text, successMsg) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToastMessage(successMsg);
+            } catch (err) {
+                showToastMessage("تعذر النسخ!");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        document.getElementById('btn-copy-num').addEventListener('click', () => {
+            const txt = `سعر التركيبة: ${numPriceEl.textContent} ج.م`;
+            fallbackCopyTextToClipboard(txt, "تم نسخ السعر بالأرقام!");
+        });
+
+        document.getElementById('btn-copy-text').addEventListener('click', () => {
+            fallbackCopyTextToClipboard(textPriceEl.textContent, "تم نسخ التفقيط بنجاح!");
+        });
+
+        document.getElementById('btn-backspace').addEventListener('click', () => {
+            if (enteredLetters.length > 0) {
+                enteredLetters = enteredLetters.slice(0, -1);
+                updateScreen();
+            }
+        });
+
+        document.getElementById('btn-clear').addEventListener('click', () => {
+            enteredLetters = "";
+            updateScreen();
+        });
+
+        // ==== 4. Keyboard Support ====
+        document.addEventListener('keydown', (e) => {
+            if (!modal.classList.contains('hidden')) return; // ignore if modal open
+            
+            const key = e.key.toUpperCase();
+            if (getCipherMap()[key] !== undefined && enteredLetters.length < 12) {
+                enteredLetters += key;
+                updateScreen();
+                e.preventDefault();
+            } else if (e.key === "Backspace") {
+                if (enteredLetters.length > 0) {
+                    enteredLetters = enteredLetters.slice(0, -1);
+                    updateScreen();
+                }
+                e.preventDefault();
+            } else if (e.key === "Delete" || e.key === "Escape") {
+                enteredLetters = "";
+                updateScreen();
+                e.preventDefault();
+            }
+        });
+
+        // ==== 5. Settings Modal Logic ====
+        function openModal() {
+            inputCipher.value = currentCipher;
+            errorMsg.classList.add('hidden');
+            modal.classList.remove('hidden');
+            // Animate in
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        document.getElementById('open-settings').addEventListener('click', openModal);
+        document.getElementById('close-settings').addEventListener('click', closeModal);
+        
+        // Ensure input is uppercase English only
+        inputCipher.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^a-zA-Z]/g, '').toUpperCase();
+        });
+
+        document.getElementById('btn-save').addEventListener('click', () => {
+            const val = inputCipher.value;
+            const uniqueChars = new Set(val);
+            
+            if (val.length === 10 && uniqueChars.size === 10) {
+                currentCipher = val;
+                localStorage.setItem('cute_cipher', currentCipher);
+                enteredLetters = "";
+                buildKeypad();
+                updateScreen();
+                closeModal();
+                showToastMessage("تم تحديث الشفرة! 💖");
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            currentCipher = DEFAULT_CIPHER;
+            localStorage.removeItem('cute_cipher');
+            inputCipher.value = DEFAULT_CIPHER;
+            errorMsg.classList.add('hidden');
+            enteredLetters = "";
+            buildKeypad();
+            updateScreen();
+            closeModal();
+            showToastMessage("تمت استعادة الشفرة الأصلية! ✨");
+        });
+
+        // Initialize
+        buildKeypad();
+        updateScreen();
+
+    </script>
+</body>
+</html>
