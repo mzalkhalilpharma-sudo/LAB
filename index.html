@@ -8,10 +8,10 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts: Baloo Bhaijaan 2 (Cute Arabic) and Nunito (Cute English/Numbers) -->
+    <!-- Google Fonts: Baloo Bhaijaan 2, Nunito, Tajawal, Fredoka -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700;800&family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -20,6 +20,8 @@
                     fontFamily: {
                         arabic: ['"Baloo Bhaijaan 2"', 'sans-serif'],
                         english: ['"Nunito"', 'sans-serif'],
+                        tajawal: ['"Tajawal"', 'sans-serif'],
+                        fredoka: ['"Fredoka"', 'sans-serif'],
                     },
                     colors: {
                         pastel: {
@@ -91,9 +93,90 @@
         .animate-float {
             animation: float 3s ease-in-out infinite;
         }
+
+        /* === Cloud Buttons CSS === */
+        .dino-clouds-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 30px;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .clouds-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .cloud-btn {
+            position: relative; 
+            background: #ffffff; 
+            width: 170px; 
+            height: 65px; 
+            border-radius: 50px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            box-shadow: 0 8px 20px rgba(181, 228, 140, 0.4); 
+            margin: 20px 10px; 
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: none; 
+            z-index: 2;
+        }
+        .cloud-btn:hover { 
+            transform: scale(1.05) translateY(-5px); 
+            box-shadow: 0 12px 25px rgba(255, 183, 178, 0.5); 
+        }
+        .cloud-btn::before { 
+            content: ''; 
+            position: absolute; 
+            background: #ffffff; 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 50%; 
+            top: -20px; 
+            left: 25px; 
+            z-index: -1; 
+        }
+        .cloud-btn::after { 
+            content: ''; 
+            position: absolute; 
+            background: #ffffff; 
+            width: 70px; 
+            height: 70px; 
+            border-radius: 50%; 
+            top: -30px; 
+            right: 25px; 
+            z-index: -1; 
+        }
+        .cloud-text { 
+            font-family: 'Tajawal', sans-serif; 
+            font-size: 13px; 
+            font-weight: 700; 
+            color: #83c5be; 
+            z-index: 5; 
+            margin-bottom: 3px; 
+            text-align: center; 
+        }
+        .cloud-code { 
+            font-family: 'Fredoka', sans-serif; 
+            font-size: 16px; 
+            font-weight: 600; 
+            color: #ff9a9e; 
+            z-index: 5; 
+            text-align: center; 
+        }
     </style>
 </head>
-<body class="min-h-screen text-pastel-text flex flex-col items-center justify-center py-6 px-4 selection:bg-pastel-pink selection:text-white">
+<body class="min-h-screen text-pastel-text flex flex-col items-center py-6 px-4 selection:bg-pastel-pink selection:text-white">
 
     <main class="w-full max-w-lg flex flex-col gap-5 z-10">
         
@@ -181,14 +264,11 @@
                         </button>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <div class="bg-white rounded-[2rem] shadow-cute border-4 border-white p-6 flex flex-col gap-4">
-            
             <!-- Letter Keys Grid: 5 columns x 2 rows -->
-            <!-- The Javascript will render exactly the 10 letters of the cipher here -->
             <div id="keypad-letters" class="grid grid-cols-5 gap-3" dir="ltr">
                 <!-- Injected via JS -->
             </div>
@@ -212,6 +292,55 @@
             </div>
         </div>
     </main>
+
+    <!-- NEW SECTION: Dino Clouds -->
+    <div class="dino-clouds-section max-w-4xl mx-auto">
+        <div class="clouds-wrapper">
+            <!-- Cloud 1 -->
+            <button class="cloud-btn" onclick="copyCloud('154977', 'تراكيب عجمي')">
+                <span class="cloud-text">تراكيب عجمي</span>
+                <span class="cloud-code">154977</span>
+            </button>
+            
+            <!-- Cloud 2 -->
+            <button class="cloud-btn" onclick="copyCloud('168614', 'تراكيب كفر عبده')">
+                <span class="cloud-text">تراكيب كفر عبده</span>
+                <span class="cloud-code">168614</span>
+            </button>
+
+            <!-- Cloud 3 -->
+            <button class="cloud-btn" onclick="copyCloud('90990', 'تركيبة معمل مصطفى كامل')">
+                <span class="cloud-text">تركيبة مصطفى كامل</span>
+                <span class="cloud-code">90990</span>
+            </button>
+        </div>
+
+        <!-- Dinosaur SVG -->
+        <div class="drop-shadow-lg transition-transform hover:scale-105 duration-300">
+            <svg viewBox="0 0 200 200" width="180" height="180" xmlns="http://www.w3.org/2000/svg">
+                <!-- Bubbles -->
+                <circle cx="140" cy="50" r="6" fill="#ffb7b2" opacity="0.8"><animate attributeName="cy" values="50;10" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.8;0" dur="2s" repeatCount="indefinite"/></circle>
+                <circle cx="155" cy="70" r="4" fill="#ffb7b2" opacity="0.8"><animate attributeName="cy" values="70;20" dur="2.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.8;0" dur="2.5s" repeatCount="indefinite"/></circle>
+                <circle cx="130" cy="65" r="5" fill="#ffb7b2" opacity="0.8"><animate attributeName="cy" values="65;15" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.8;0" dur="1.8s" repeatCount="indefinite"/></circle>
+                <!-- Dino Body -->
+                <path d="M 40 180 C 40 180, 20 120, 50 80 C 60 50, 80 40, 100 40 C 120 40, 130 55, 125 70 C 120 85, 100 85, 90 90 C 80 95, 80 110, 85 120 C 95 140, 140 140, 140 180 Z" fill="#99d98c"/>
+                <path d="M 40 180 C 40 180, 45 140, 65 120 C 80 140, 110 140, 140 180 Z" fill="#b5e48c" opacity="0.5"/>
+                <!-- Face -->
+                <circle cx="105" cy="55" r="5" fill="#2d2d2d"/><circle cx="107" cy="54" r="1.5" fill="#ffffff"/>
+                <circle cx="85" cy="55" r="5" fill="#2d2d2d"/><circle cx="87" cy="54" r="1.5" fill="#ffffff"/>
+                <ellipse cx="75" cy="62" rx="6" ry="3.5" fill="#ffb7b2" opacity="0.7"/>
+                <ellipse cx="115" cy="62" rx="6" ry="3.5" fill="#ffb7b2" opacity="0.7"/>
+                <path d="M 90 62 Q 95 68 100 62" fill="none" stroke="#2d2d2d" stroke-width="2" stroke-linecap="round"/>
+                <!-- Arms & Flask -->
+                <path d="M 85 105 Q 110 120 125 105" fill="none" stroke="#99d98c" stroke-width="12" stroke-linecap="round"/>
+                <path d="M 125 105 L 135 65 L 145 65 L 155 105 C 160 115 120 115 125 105 Z" fill="#ffb7b2" opacity="0.9"/>
+                <path d="M 125 105 C 125 115 155 115 155 105 Z" fill="#ffb7b2"/>
+                <rect x="137" y="55" width="6" height="10" fill="#f8f9fa" rx="2"/>
+                <!-- Sparkles -->
+                <path d="M 20 50 L 25 60 L 35 65 L 25 70 L 20 80 L 15 70 L 5 65 L 15 60 Z" fill="#ffda3d" transform="scale(0.5) translate(20, -20)"/>
+            </svg>
+        </div>
+    </div>
 
     <!-- Cute Footer -->
     <footer class="mt-6 mb-2 text-center text-sm font-eng font-extrabold text-pink-400 tracking-wide flex items-center justify-center gap-1.5 z-10 transition-transform hover:scale-105 cursor-default">
@@ -254,8 +383,8 @@
     </div>
 
     <!-- Cute Toast Notification -->
-    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-white px-6 py-3.5 rounded-full shadow-cute border-2 border-pink-200 flex items-center gap-3 text-pink-600 font-bold text-sm z-50 transform translate-y-20 opacity-0 transition-all duration-400 pointer-events-none">
-        <span class="text-xl">💖</span>
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-white px-6 py-3.5 rounded-full shadow-cute border-2 border-pink-200 flex items-center gap-3 text-pink-600 font-bold text-sm z-50 transform translate-y-20 opacity-0 transition-all duration-400 pointer-events-none whitespace-nowrap">
+        <span class="text-xl" id="toast-icon">💖</span>
         <span id="toast-text">تم النسخ بنجاح!</span>
     </div>
 
@@ -275,6 +404,7 @@
         const cipherBadge = document.getElementById('current-cipher-badge');
         const toast = document.getElementById('toast');
         const toastText = document.getElementById('toast-text');
+        const toastIcon = document.getElementById('toast-icon');
         
         const modal = document.getElementById('modal-settings');
         const modalContent = document.getElementById('modal-content');
@@ -426,8 +556,9 @@
         }
 
         // ==== 3. Actions & Clipboard ====
-        function showToastMessage(msg) {
+        function showToastMessage(msg, icon = '💖') {
             toastText.textContent = msg;
+            toastIcon.textContent = icon;
             toast.classList.remove('translate-y-20', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
             setTimeout(() => {
@@ -436,7 +567,7 @@
             }, 2500);
         }
 
-        function fallbackCopyTextToClipboard(text, successMsg) {
+        function fallbackCopyTextToClipboard(text, successMsg, icon = '💖') {
             var textArea = document.createElement("textarea");
             textArea.value = text;
             textArea.style.top = "0";
@@ -447,11 +578,16 @@
             textArea.select();
             try {
                 document.execCommand('copy');
-                showToastMessage(successMsg);
+                showToastMessage(successMsg, icon);
             } catch (err) {
-                showToastMessage("تعذر النسخ!");
+                showToastMessage("تعذر النسخ!", '❌');
             }
             document.body.removeChild(textArea);
+        }
+
+        // New function for the Cloud Buttons
+        function copyCloud(code, name) {
+            fallbackCopyTextToClipboard(code, 'تم نسخ كود: ' + name, '☁️');
         }
 
         document.getElementById('btn-copy-num').addEventListener('click', () => {
