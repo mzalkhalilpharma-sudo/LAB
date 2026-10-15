@@ -117,7 +117,7 @@
         .cloud-btn {
             position: relative; 
             background: #ffffff; 
-            width: 170px; 
+            width: 180px; 
             height: 65px; 
             border-radius: 50px; 
             display: flex; 
@@ -126,7 +126,7 @@
             align-items: center; 
             cursor: pointer; 
             box-shadow: 0 8px 20px rgba(181, 228, 140, 0.4); 
-            margin: 20px 10px; 
+            margin: 15px 10px; 
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             border: none; 
             z-index: 2;
@@ -159,16 +159,17 @@
         }
         .cloud-text { 
             font-family: 'Tajawal', sans-serif; 
-            font-size: 13px; 
+            font-size: 12px; 
             font-weight: 700; 
             color: #83c5be; 
             z-index: 5; 
-            margin-bottom: 3px; 
+            margin-bottom: 2px; 
             text-align: center; 
+            padding: 0 5px;
         }
         .cloud-code { 
             font-family: 'Fredoka', sans-serif; 
-            font-size: 16px; 
+            font-size: 15px; 
             font-weight: 600; 
             color: #ff9a9e; 
             z-index: 5; 
@@ -312,6 +313,12 @@
             <button class="cloud-btn" onclick="copyCloud('90990', 'تركيبة معمل مصطفى كامل')">
                 <span class="cloud-text">تركيبة مصطفى كامل</span>
                 <span class="cloud-code">90990</span>
+            </button>
+
+            <!-- Cloud 4: PF -->
+            <button class="cloud-btn" style="width: 195px;" onclick="copyCloud('105636', 'PHARAMCEUTICAL FORMULA (PF)')">
+                <span class="cloud-text" style="font-size: 10px;">PF FORMULA</span>
+                <span class="cloud-code">105636</span>
             </button>
         </div>
 
@@ -474,7 +481,6 @@
         // ==== 2. UI Updates & Calculators ====
         function getCipherMap() {
             const map = {};
-            // Letter at index 0..8 mapped to 1..9. Letter at index 9 mapped to 0.
             for (let i = 0; i < 10; i++) {
                 const char = currentCipher[i].toUpperCase();
                 map[char] = (i === 9) ? 0 : i + 1;
@@ -486,13 +492,11 @@
             keypadContainer.innerHTML = '';
             const map = getCipherMap();
             
-            // Render exactly in the order of the cipher string
             for (let i = 0; i < currentCipher.length; i++) {
                 const char = currentCipher[i].toUpperCase();
                 const digit = map[char];
                 
                 const btn = document.createElement('button');
-                // Cute styling for keys: LTR is on container, these render sequentially
                 btn.className = "btn-bouncy flex flex-col items-center justify-center py-3 bg-white shadow-cute-btn shadow-slate-200 border-2 border-slate-100 rounded-2xl text-slate-700 hover:text-pink-500 hover:border-pink-200 transition-colors group";
                 
                 btn.innerHTML = `
@@ -501,7 +505,7 @@
                 `;
                 
                 btn.addEventListener('click', () => {
-                    if(enteredLetters.length < 12) { // Limit length
+                    if(enteredLetters.length < 12) {
                         enteredLetters += char;
                         updateScreen();
                     }
@@ -513,7 +517,6 @@
         }
 
         function updateScreen() {
-            // Render typed letters LTR
             if (enteredLetters === "") {
                 displayDiv.innerHTML = "";
                 emptyHint.style.display = "block";
@@ -525,15 +528,12 @@
 
             emptyHint.style.display = "none";
             
-            // Build visual letters (left to right)
             displayDiv.innerHTML = enteredLetters.split('').map(char => 
                 `<span class="mx-0.5 inline-block text-pink-300 transform scale-110 drop-shadow-md">${char}</span>`
             ).join('');
             
-            // Scroll to end of LTR display automatically
             displayDiv.scrollLeft = displayDiv.scrollWidth;
 
-            // Calculate Value
             const map = getCipherMap();
             let piastersStr = "";
             for (let char of enteredLetters) {
@@ -547,10 +547,8 @@
             const pounds = Math.floor(totalPiastres / 100);
             const piasters = totalPiastres % 100;
 
-            // Update Numbers
             numPriceEl.textContent = (totalPiastres / 100).toFixed(2);
             
-            // Update Text
             const arabicWords = tafqeetEgyptian(pounds, piasters);
             textPriceEl.textContent = `سعر التركيبة: ${arabicWords} فقط لا غير`;
         }
@@ -585,7 +583,6 @@
             document.body.removeChild(textArea);
         }
 
-        // New function for the Cloud Buttons
         function copyCloud(code, name) {
             fallbackCopyTextToClipboard(code, 'تم نسخ كود: ' + name, '☁️');
         }
@@ -613,7 +610,7 @@
 
         // ==== 4. Keyboard Support ====
         document.addEventListener('keydown', (e) => {
-            if (!modal.classList.contains('hidden')) return; // ignore if modal open
+            if (!modal.classList.contains('hidden')) return;
             
             const key = e.key.toUpperCase();
             if (getCipherMap()[key] !== undefined && enteredLetters.length < 12) {
@@ -638,7 +635,6 @@
             inputCipher.value = currentCipher;
             errorMsg.classList.add('hidden');
             modal.classList.remove('hidden');
-            // Animate in
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
                 modalContent.classList.remove('scale-95');
@@ -658,7 +654,6 @@
         document.getElementById('open-settings').addEventListener('click', openModal);
         document.getElementById('close-settings').addEventListener('click', closeModal);
         
-        // Ensure input is uppercase English only
         inputCipher.addEventListener('input', (e) => {
             e.target.value = e.target.value.replace(/[^a-zA-Z]/g, '').toUpperCase();
         });
